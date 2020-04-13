@@ -11,7 +11,7 @@ while test $# -gt 0; do
     echo "or *.fastq.gz in the current working directory as input and writes" 
     echo "BAM and bigWig files as output to the user-assigned output-dir."
     echo "The output bigWig files ending with _minus.bw or _plus.bw are raw read counts without normalization." 
-    ehco "The RPM normalized outputs end with a suffix of .rpm.bw."
+    echo "The RPM normalized outputs end with a suffix of .rpm.bw."
     echo ""
     echo "Requirements in current working directory:"
     echo "cutadapt 1.8.3, fastx_trimmer, seqtk, prinseq-lite.pl 0.20.2, bwa, samtools, bedtools, and bedGraphToBigWig."
@@ -402,13 +402,13 @@ if [ -z "$OUTPUT" ]; then
 fi
 
 if [ ! -d $OUTPUT ]; then
-  mkdir $OUTPUT
+  mkdir -p $OUTPUT
 fi
 if [ -z "$TMPDIR" ]; then
         TMPDIR="./"
 fi
 if [ ! -d $TMPDIR ]; then
-  mkdir $TMPDIR
+  mkdir -p $TMPDIR
 fi
 # bash generate random 32 character alphanumeric string (upper and lowercase).
 tmp=`cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1`
@@ -586,19 +586,19 @@ fi
 
 
 ## DOIT!
-mkdir ${TMPDIR}
+mkdir -p ${TMPDIR}
 
 if [[ "$SEQ" == "PE" ]] ; then 
 #############################################
 ## Preprocess data.  Remove adapters.  Trim.
 echo " "
 echo "Preprocessing fastq files:"
-mkdir ${TMPDIR}/noadapt
-mkdir ${TMPDIR}/passQC
+mkdir -p ${TMPDIR}/noadapt
+mkdir -p ${TMPDIR}/passQC
 if [[ ${UMI2} != 0 || ${UMI1} != 0 ]]; then 
   dedup_L=30 
-  mkdir ${TMPDIR}/noadapt/l${dedup_L}
-  mkdir ${TMPDIR}/noadapt/l${dedup_L}_nodups
+  mkdir -p ${TMPDIR}/noadapt/l${dedup_L}
+  mkdir -p ${TMPDIR}/noadapt/l${dedup_L}_nodups
 fi
 
 for name in ${FQ_INPUT[@]}
@@ -715,7 +715,7 @@ for name in ${FQ_INPUT[@]}
 wait
 # if there is a data-set wide length cutoff map_L
 if [[ ${map_L} != 0 ]]; then
-   mkdir ${TMPDIR}/passQC_length_${map_L}
+   mkdir -p ${TMPDIR}/passQC_length_${map_L}
    for f in ${TMPDIR}/passQC/*_QC_end_1.fastq
     do name=`echo $f |rev |cut -d / -f 1 |cut -d _ -f 4-|rev`
     cat ${f} | fastx_trimmer -Q33 -l ${map_L} -o ${TMPDIR}/passQC_length_${map_L}/${name}_l${map_L}_QC_end_1.fastq &
@@ -758,7 +758,7 @@ fi
 if [[ ! -z "$PREMAP_BWAIDX" ]]; then
    echo " "
    echo "Pre-Mapping reads start ..."
-    mkdir ${TMPDIR}/Unmapped_to_premap
+    mkdir -p ${TMPDIR}/Unmapped_to_premap
     if [[ ! -z "$aln" ]]; then
         for name in ${QC_INPUT}
         do
@@ -903,12 +903,12 @@ if [[ "$SEQ" == "SE" ]] ; then
 ## Preprocess data.  Remove adapters.  Trim.
 echo " "
 echo "Preprocessing fastq files:"
-mkdir ${TMPDIR}/noadapt
-mkdir ${TMPDIR}/passQC
+mkdir -p ${TMPDIR}/noadapt
+mkdir -p ${TMPDIR}/passQC
 if [[ ${UMI2} != 0 || ${UMI1} != 0 ]]; then 
   dedup_L=30 
-  mkdir ${TMPDIR}/noadapt/l${dedup_L}
-  mkdir ${TMPDIR}/noadapt/l${dedup_L}_nodups
+  mkdir -p ${TMPDIR}/noadapt/l${dedup_L}
+  mkdir -p ${TMPDIR}/noadapt/l${dedup_L}_nodups
 fi
 
 for name in ${FQ_INPUT[@]}
@@ -991,7 +991,7 @@ done
 
 # if there is a data-set wide length cutoff map_L
 if [[ ${map_L} != 0 ]]; then
-   mkdir ${TMPDIR}/passQC_length_${map_L}
+   mkdir -p ${TMPDIR}/passQC_length_${map_L}
    for f in ${TMPDIR}/passQC/*_QC_end.fastq
     do name=`echo $f |rev |cut -d / -f 1 |cut -d _ -f 3-|rev`
     cat ${f} | fastx_trimmer -Q33 -l ${map_L} -o ${TMPDIR}/passQC_length_${map_L}/${name}_l${map_L}_QC_end.fastq &
@@ -1030,7 +1030,7 @@ fi
 # premap if PREMAP_BWAIDX is given
 if [[ ! -z "$PREMAP_BWAIDX" ]]; then
     echo "Pre-mapping start ..."
-    mkdir ${TMPDIR}/Unmapped_to_premap
+    mkdir -p ${TMPDIR}/Unmapped_to_premap
    if [[ ! -z "$mem" ]]; then
       for name in ${QC_INPUT}
         do
